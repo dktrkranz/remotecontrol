@@ -27,7 +27,7 @@ from os import environ
 from subprocess import check_output, CalledProcessError
 from sys import argv
 
-options = ('play', 'pause', 'stop', 'volumeup', 'volumedown')
+options = ('play', 'pause', 'stop', 'volume', 'volumeup', 'volumedown')
 
 T_SERVICE_NAME = 'org.mpris.Totem'
 T_OBJECT_PATH = '/Player'
@@ -35,7 +35,7 @@ T_INTERFACE = 'org.freedesktop.MediaPlayer'
 
 try:
     option = argv[1]
-except:
+except IndexError:
     pass
 else:
     if option in options:
@@ -69,6 +69,14 @@ else:
             if totem_mediaplayer.GetStatus()[0] != 2:
                 totem_mediaplayer.Stop()
                 print('Playback stopped')
+        elif option == 'volume':
+            try:
+                volume = int(argv[2])
+            except (IndexError, ValueError):
+                pass
+            else:
+                totem_mediaplayer.VolumeSet(volume)
+                print(('Volume set to %d' % totem_mediaplayer.VolumeGet()))
         elif option == 'volumeup':
             volume = totem_mediaplayer.VolumeGet() * 110 / 100
             totem_mediaplayer.VolumeSet(volume)
